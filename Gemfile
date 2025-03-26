@@ -57,3 +57,9 @@ group :test do
 end
 
 gem "dotenv-rails", groups: [ :development, :test ]
+
+# for llm models supported by ruby-openai gem
+gem "ruby-openai", "~> 5.1"
+
+# for making HTTP requests to Gemini api thet is not supported by ruby-openai gem
+gem "httparty"
