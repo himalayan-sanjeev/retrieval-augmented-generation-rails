@@ -1,0 +1,10 @@
+h2 Uploaded Documents
+
+ul
+  - @documents.each do |doc|
+    li
+      strong= "Document ##{doc.id}"
+      |  - Created at: #{doc.created_at.strftime('%b %d, %Y')}
+  
+  = link_to 'Add new document', new_document_path
+  = link_to 'Search relevant info', search_index_path

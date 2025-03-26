@@ -1,0 +1,5 @@
+h2 Upload Text File
+
+= form_with url: documents_path, local: true, html: { multipart: true } do
+  = file_field_tag :file
+  = submit_tag "Upload"
