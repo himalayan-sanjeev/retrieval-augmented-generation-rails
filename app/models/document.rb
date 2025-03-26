@@ -2,6 +2,7 @@ class Document < ApplicationRecord
   has_many :chunks, dependent: :destroy
   before_create :generate_embedding
   after_create :chunk_content
+  after_update :refresh_chunks
 
   EMBEDDING_MODEL = "text-embedding-ada-002"
   GEMINI_MODEL = "models/gemini-embedding-exp-03-07"
@@ -62,6 +63,11 @@ class Document < ApplicationRecord
       Rails.logger.error "Gemini Error: #{response.parsed_response}"
       self.embedding = nil
     end
+  end
+
+  def refresh_chunks
+    chunks.destroy_all
+    chunk_content
   end
 
   def generate_embedding_using_openai
