@@ -63,3 +63,6 @@ gem "ruby-openai", "~> 5.1"
 
 # for making HTTP requests to Gemini api thet is not supported by ruby-openai gem
 gem "httparty"
+
+# for supporting slim templates
+gem "slim-rails"
