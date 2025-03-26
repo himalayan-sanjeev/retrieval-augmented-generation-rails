@@ -1,5 +1,7 @@
 class Document < ApplicationRecord
+  has_many :chunks, dependent: :destroy
   before_create :generate_embedding
+  after_create :chunk_content
 
   EMBEDDING_MODEL = "text-embedding-ada-002"
   GEMINI_MODEL = "models/gemini-embedding-exp-03-07"
@@ -10,11 +12,35 @@ class Document < ApplicationRecord
     @openai = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY", nil))
   end
 
+  def self.search_similar(query, top_k: 3)
+    response = HTTParty.post(
+      "#{GEMINI_ENDPOINT}?key=#{ENV['GEMINI_API_KEY']}",
+      headers: { "Content-Type" => "application/json" },
+      body: {
+        model: GEMINI_MODEL,
+        content: {
+          parts: [ { text: query } ]
+        }
+      }.to_json
+    )
+
+    embedding = response.dig("embedding", "values")
+    vector = "[#{embedding.join(',')}]"
+
+    Document
+      .order(Arel.sql("embedding <#> '#{vector}'")) # <#> = cosine distance
+      .limit(top_k)
+  end
+
+  def chunk_content
+    TextSplitter.chunk(content).each do |chunk_text|
+      chunks.create!(content: chunk_text)
+    end
+  end
 
   private
 
   def generate_embedding
-    debugger
     response = HTTParty.post(
       "#{GEMINI_ENDPOINT}?key=#{GEMINI_API_KEY}",
       headers: { "Content-Type" => "application/json" },
