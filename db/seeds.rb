@@ -7,3 +7,7 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+Document.create!(content: "Ruby on Rails is a popular web development framework.")
+Document.create!(content: "OpenAI provides APIs for text and embedding generation.")
+Document.create!(content: "pgvector allows similarity search with vector data.")
