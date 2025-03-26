@@ -6,8 +6,12 @@ h2 Ask a question about your documents
   = text_field_tag :query, nil, size: 80
   = submit_tag "Search"
 
-- if defined?(@results) && @results.present?
-  h3 Top Matching Chunks:
+- if @response.present?
+  h3 Generative Response
+  p= simple_format(@response)
+
+- if @results.present?
+  h3 Matching Document Chunks
   ul
     - @results.each do |chunk|
       li
