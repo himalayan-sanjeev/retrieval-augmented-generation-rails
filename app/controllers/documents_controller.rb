@@ -9,14 +9,17 @@ class DocumentsController < ApplicationController
   def new; end
 
   def create
-    file = params[:file]
+    uploaded_file = params[:file]
+    return redirect_to documents_path, alert: "No file uploaded." unless uploaded_file
 
-    if file && file.content_type == "text/plain"
-      content = file.read
-      Document.create!(content: content)
-      redirect_to documents_path, notice: "Document uploaded and processed!"
+    content = FileTextExtractor.extract(uploaded_file)
+
+    @document = Document.new(content: content)
+
+    if @document.save
+      redirect_to @document, notice: "Document uploaded!"
     else
-      redirect_to new_document_path, alert: "Only .txt files are supported."
+      render :new
     end
   end
 

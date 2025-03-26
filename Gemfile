@@ -69,3 +69,8 @@ gem "slim-rails"
 
 # for supporting tailwindcss
 gem "tailwindcss-rails"
+
+# for supporting different file formats
+gem "pdf-reader"
+gem "docx"
+gem "nokogiri"

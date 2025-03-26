@@ -1,12 +1,12 @@
 .section.mt-12.max-w-xl.mx-auto.space-y-6
 
   h2.text-2xl.font-semibold.text-center.text-gray-800
-    | Upload a Text File
+    | Upload a Document/File
 
   = form_with url: documents_path, local: true, html: { multipart: true }, class: "space-y-4" do
     .flex.flex-col.gap-3
-      label.text-gray-700.text-sm.font-medium Select a .txt File:
-      = file_field_tag :file, class: "border border-gray-300 rounded-md px-4 py-2"
+      label.text-gray-700.text-sm.font-medium Select a File (txt, pdf, docx, html):
+      = file_field_tag :file, accept: ".txt,.pdf,.docx,.html", class: "border border-gray-300 rounded-md px-4 py-2"
 
     = submit_tag "Upload", class: "bg-blue-600 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition"
 
