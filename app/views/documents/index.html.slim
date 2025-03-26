@@ -1,10 +1,15 @@
-h2 Uploaded Documents
+.section.mt-12.max-w-2xl.mx-auto.space-y-6
 
-ul
-  - @documents.each do |doc|
-    li
-      strong= "Document ##{doc.id}"
-      |  - Created at: #{doc.created_at.strftime('%b %d, %Y')}
-  
-  = link_to 'Add new document', new_document_path
-  = link_to 'Search relevant info', search_index_path
+  h2.text-2xl.font-semibold.text-center.text-gray-800
+    | Uploaded Documents
+
+  ul.divide-y.divide-gray-200.rounded-xl.border.border-gray-200.bg-white.shadow-sm
+    - @documents.each do |doc|
+      li.p-4
+        p.text-gray-700
+          strong= "Document ##{doc.id}"
+          |  – Created at: #{doc.created_at.strftime('%b %d, %Y')}
+
+  .flex.justify-between.mt-6
+    = link_to "➕ Add New Document", new_document_path, class: "bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition"
+    = link_to "🔍 Search Relevant Info", search_path, class: "bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition"

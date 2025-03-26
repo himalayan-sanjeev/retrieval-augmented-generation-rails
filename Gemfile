@@ -66,3 +66,6 @@ gem "httparty"
 
 # for supporting slim templates
 gem "slim-rails"
+
+# for supporting tailwindcss
+gem "tailwindcss-rails"
