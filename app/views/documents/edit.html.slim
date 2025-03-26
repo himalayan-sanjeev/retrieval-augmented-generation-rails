@@ -1,0 +1,13 @@
+.section.mt-12.max-w-3xl.mx-auto.space-y-6
+
+  h2.text-2xl.font-semibold.text-center.text-gray-800
+    | Edit Document ##{@document.id}
+
+  = form_with model: @document, local: true, data: { turbo: false }, class: "space-y-4" do |form|
+    .flex.flex-col.space-y-2
+      label.text-sm.text-gray-600 Document Content:
+      = form.text_area :content, rows: 10, class: "w-full border border-gray-300 rounded-md p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+    = form.submit "Update", class: "bg-blue-600 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition"
+
+  = link_to "← Cancel", document_path(@document), class: "text-gray-500 hover:underline block mt-4"

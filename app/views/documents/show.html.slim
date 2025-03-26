@@ -1,0 +1,26 @@
+.section.mt-12.max-w-3xl.mx-auto.space-y-6
+
+  h2.text-2xl.font-semibold.text-gray-800
+    | Document ##{@document.id}
+
+  .bg-white.rounded-xl.shadow-md.p-6.border.border-gray-200
+    h3.text-lg.font-semibold.text-gray-600.mb-2
+      | Content
+
+    p.text-gray-800.leading-relaxed= simple_format(@document.content)
+
+    hr.my-4
+
+    p.text-sm.text-gray-500
+      | Created at: #{@document.created_at.strftime('%B %d, %Y %l:%M %p')}
+
+  .flex.justify-between.mt-6
+    = link_to documents_path, class: "text-blue-600 hover:underline flex items-center gap-1" do
+      svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"
+      span Back
+
+    = link_to edit_document_path(@document), class: "text-yellow-600 hover:text-yellow-800 flex items-center gap-1" do
+      svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2M12 4v16m0 0H4m8 0h8"
+      span Edit

@@ -1,14 +1,33 @@
-.section.mt-12.max-w-2xl.mx-auto.space-y-6
+.section.mt-12.max-w-5xl.mx-auto.space-y-6
 
-  h2.text-2xl.font-semibold.text-center.text-gray-800
+  h2.text-2xl.font-semibold.text-gray-800.text-center
     | Uploaded Documents
 
-  ul.divide-y.divide-gray-200.rounded-xl.border.border-gray-200.bg-white.shadow-sm
-    - @documents.each do |doc|
-      li.p-4
-        p.text-gray-700
-          strong= "Document ##{doc.id}"
-          |  – Created at: #{doc.created_at.strftime('%b %d, %Y')}
+  table.table-auto.w-full.text-left.text-sm.text-gray-700.border-collapse
+    thead
+      tr.bg-gray-100.text-gray-600.uppercase.text-xs
+        th.px-4.py-3 ID
+        th.px-4.py-3 Content
+        th.px-4.py-3 Uploaded At
+        th.px-4.py-3 Actions
+
+    tbody
+      - @documents.each do |doc|
+        tr.border-b.border-gray-200.hover:bg-gray-50
+          td.px-4.py-2.font-medium.text-gray-800= doc.id
+          td.px-4.py-2.text-gray-600
+            = truncate(doc.content.to_s.strip, length: 100)
+          td.px-4.py-2= doc.created_at.strftime('%b %d, %Y')
+          td.px-4.py-2.flex.gap-3
+            = link_to document_path(doc), class: "text-blue-600 hover:text-blue-800 flex items-center gap-1" do
+              svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+              span Show
+
+            = link_to document_path(doc), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-800 flex items-center gap-1" do
+              svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"
+              span Delete
 
   .flex.justify-between.mt-6
     = link_to "➕ Add New Document", new_document_path, class: "bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition"

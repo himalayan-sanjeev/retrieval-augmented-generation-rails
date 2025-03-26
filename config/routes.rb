@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get "search/index"
   get "search/query"
-  resources :documents, only: [ :index, :new, :create ]
+  resources :documents
   get "search", to: "search#index"
   post "search", to: "search#query"
 
