@@ -19,10 +19,9 @@
           th.px-4.py-3 Actions
 
       tbody
-        - @documents.each do |doc|
+        - @documents.each_with_index do |doc, index|
           tr.border-b.border-gray-200.hover:bg-gray-50
-            td.px-4.py-2.font-medium.text-gray-800= doc.id
-
+            td.px-4.py-2.font-medium.text-gray-800= index + 1
             td.px-4.py-2.text-gray-600
               = truncate(doc.content.to_s.strip, length: 100)
 
