@@ -21,9 +21,9 @@
           | 📄 Top Matching Chunks
 
       ul.divide-y.divide-gray-200
-        - @results.each do |chunk|
-          li.px-6.py-4
-            small.text-sm.text-gray-500= "From Document ##{chunk.document_id}"
-            br
-            p.mt-1.text-gray-800.leading-relaxed
-              = simple_format(chunk.content)
+        - @results.each_with_index do |chunk, index|
+          .bg-white.rounded-lg.shadow-md.p-4.border.border-gray-200
+            p.text-xs.text-gray-500.mb-1
+              | 📎 Chunk ##{chunk.position} · Tokens: #{chunk.token_count} · 
+              span.text-green-600.font-semibold.ml-1 Similarity: #{number_with_precision(chunk["similarity_score"].to_f, precision: 4)}
+            p.text-sm.text-gray-800.leading-relaxed.mt-2= simple_format(chunk.content)

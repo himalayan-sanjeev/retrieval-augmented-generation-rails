@@ -4,6 +4,7 @@ class Chunk < ApplicationRecord
   validates :token_count, presence: true
 
   before_create :generate_embedding
+  attr_accessor :similarity_score
 
   GEMINI_MODEL = "models/gemini-embedding-exp-03-07"
   GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-exp-03-07:embedContent"
@@ -42,6 +43,9 @@ class Chunk < ApplicationRecord
 
     return Chunk.none unless embedding.present?
 
-    Chunk.order(Arel.sql("embedding <#> '[#{embedding.join(',')}]'")).limit(top_k)
+    Chunk
+    .select("chunks.*, (embedding <#> '[#{embedding.join(',')}]') AS similarity_score")
+    .order("similarity_score ASC")
+    .limit(top_k)
   end
 end
