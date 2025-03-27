@@ -1,29 +1,30 @@
 .section.mt-12.max-w-2xl.mx-auto.space-y-8
 
   h2.text-2xl.font-semibold.text-center.text-gray-800
-    | Ask a question about your documents
+    = t('search.title')
 
   = form_with url: search_path, method: :post, local: true, data: { turbo: false }, class: "space-y-4" do
     .flex.gap-2
-      = text_field_tag :query, params[:query], placeholder: "e.g. 5 facts about Nepal", class: "flex-1 px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-      = submit_tag "Search", class: "px-5 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition"
+      = text_field_tag :query, params[:query], placeholder: t('search.placeholder'), class: "flex-1 px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+      = submit_tag t('search.submit'), class: "px-5 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition"
 
   - if @response.present?
     .rounded-2xl.shadow-md.border.border-gray-200.bg-white.p-6
       h3.text-lg.font-semibold.mb-3.text-green-600
-        | 💬 Gemini Answer
+        = t('search.answer_heading')
       = simple_format(@response)
 
   - if @results.present?
     .rounded-2xl.shadow-md.border.border-gray-100.bg-gray-50
       .px-6.pt-4
         h3.text-lg.font-semibold.text-gray-700
-          | 📄 Top Matching Chunks
+          = t('search.results_heading')
 
       ul.divide-y.divide-gray-200
         - @results.each_with_index do |chunk, index|
           .bg-white.rounded-lg.shadow-md.p-4.border.border-gray-200
             p.text-xs.text-gray-500.mb-1
-              | 📎 Chunk ##{chunk.position} · Tokens: #{chunk.token_count} · 
-              span.text-green-600.font-semibold.ml-1 Similarity: #{number_with_precision(chunk["similarity_score"].to_f, precision: 4)}
+              = t('search.chunk_meta', position: chunk.position, tokens: chunk.token_count)
+              span.text-green-600.font-semibold.ml-1= number_with_precision(chunk["similarity_score"].to_f, precision: 4)
+
             p.text-sm.text-gray-800.leading-relaxed.mt-2= simple_format(chunk.content)

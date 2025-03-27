@@ -19,6 +19,14 @@
   </head>
 
   <body>
+    <div class="flex justify-end px-6 mt-4">
+      <div class="inline-flex items-center bg-gray-100 rounded-xl shadow-sm">
+        <%= link_to "English", url_for(locale: :en), class: "px-4 py-1 rounded-l-xl text-sm font-medium #{'bg-white text-blue-600 shadow' if I18n.locale == :en}" %>
+        <%= link_to "नेपाली", url_for(locale: :ne), class: "px-4 py-1 rounded-r-xl text-sm font-medium #{'bg-white text-blue-600 shadow' if I18n.locale == :ne}" %>
+      </div>
+    </div>
+
+
     <main class="container mx-auto mt-28 px-5 flex">
       <%= yield %>
     </main>
