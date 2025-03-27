@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  get "search/index"
-  get "search/query"
   resources :documents
   get "search", to: "search#index"
   post "search", to: "search#query"
@@ -16,5 +14,5 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   # Defines the root path route ("/")
-  root "documents#index"
+  root "search#index"
 end

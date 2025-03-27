@@ -4,6 +4,7 @@ class DocumentsController < ApplicationController
 
   def index
     @documents = Document.all
+    @chunks = Chunk.all
   end
 
   def new; end
