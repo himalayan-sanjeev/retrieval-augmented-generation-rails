@@ -34,7 +34,6 @@ class DocumentsController < ApplicationController
     if @document.update(document_params)
       redirect_to @document, notice: "Document updated."
     else
-      debugger
       render :edit
     end
   end
