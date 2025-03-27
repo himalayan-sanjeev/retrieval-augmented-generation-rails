@@ -36,5 +36,5 @@
 
         - @document.chunks.each_with_index do |chunk, index|
           .bg-white.p-3.rounded-md.shadow.text-sm.text-gray-800.border.border-gray-100
-            p.font-semibold.text-gray-500.mb-1= "Chunk ##{index + 1}"
+            p.font-semibold.text-gray-500.mb-1= "Chunk ##{index + 1} (Tokens: #{chunk.token_count})"
             p= simple_format(chunk.content)

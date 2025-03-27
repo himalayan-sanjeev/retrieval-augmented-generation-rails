@@ -34,8 +34,12 @@ class Document < ApplicationRecord
   end
 
   def chunk_content
-    TextSplitter.chunk(content).each do |chunk_text|
-      chunks.create!(content: chunk_text)
+    TextSplitter.chunk(content).each_with_index do |chunk_text, index|
+      chunks.create!(
+        content: chunk_text,
+        position: index + 1,
+        token_count: chunk_text.split.size
+      )
     end
   end
 

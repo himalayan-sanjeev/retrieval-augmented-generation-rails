@@ -1,5 +1,7 @@
 class Chunk < ApplicationRecord
   belongs_to :document
+  validates :position, presence: true
+  validates :token_count, presence: true
 
   before_create :generate_embedding
 
