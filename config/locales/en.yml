@@ -27,5 +27,12 @@
 #       "yes": yup
 #       enabled: "ON"
 
+# config/locales/en.yml
 en:
-  hello: "Hello world"
+  search:
+    title: "Ask a question about your documents"
+    placeholder: "e.g. 5 facts about Nepal"
+    submit: "Search"
+    answer_heading: "💬 Gemini Answer"
+    results_heading: "📄 Top Matching Chunks"
+    chunk_meta: "📎 Chunk %{position} · Tokens: %{tokens} · Similarity:"
