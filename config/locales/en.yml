@@ -30,9 +30,16 @@
 # config/locales/en.yml
 en:
   search:
-    title: "Ask a question about your documents"
-    placeholder: "e.g. 5 facts about Nepal"
+    title: "🤖 Ask Questions Relevant to the Knowledge Base"
+    subtitle: "Use natural language prompts to get AI-powered answers based on your knowledge base."
+    placeholder: "e.g. Tell me about Ruby on Rails"
     submit: "Search"
     answer_heading: "💬 Gemini Answer"
     results_heading: "📄 Top Matching Chunks"
     chunk_meta: "📎 Chunk %{position} · Tokens: %{tokens} · Similarity:"
+    sidebar_title: "🧠 Knowledge Base"
+  documents:
+    search_relevant: "🔍 Search Relevant Info"
+    add_document: "➕ Add New Document"
+    doc_index: "📚 Knowledge Base"
+    content_snapshot: "📦 Content Snapshot"

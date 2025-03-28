@@ -1,30 +1,41 @@
-.section.mt-12.max-w-2xl.mx-auto.space-y-8
+.section.mt-12.mx-auto.max-w-7xl.relative
+  .w-2/3.pr-4
+    h2.text-3xl.font-extrabold.text-center.text-gray-800.mb-4
+      = t('search.title')
 
-  h2.text-2xl.font-semibold.text-center.text-gray-800
-    = t('search.title')
+    p.text-center.text-gray-500.text-sm.mb-6.max-w-xl.mx-auto
+      = t('search.subtitle')
 
-  = form_with url: search_path, method: :post, local: true, data: { turbo: false }, class: "space-y-4" do
-    .flex.gap-2
-      = text_field_tag :query, params[:query], placeholder: t('search.placeholder'), class: "flex-1 px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-      = submit_tag t('search.submit'), class: "px-5 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition"
+    = form_with url: search_path, method: :post, local: true, data: { turbo: false }, class: "space-y-4" do
+      .flex.gap-2
+        = text_field_tag :query, params[:query], placeholder: t('search.placeholder'), class: "flex-1 px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+        = submit_tag t('search.submit'), class: "px-5 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition"
 
-  - if @response.present?
-    .rounded-2xl.shadow-md.border.border-gray-200.bg-white.p-6
-      h3.text-lg.font-semibold.mb-3.text-green-600
-        = t('search.answer_heading')
-      = simple_format(@response)
+    - if @response.present?
+      .rounded-2xl.shadow-md.border.border-gray-200.bg-white.p-6
+        h3.text-lg.font-semibold.mb-3.text-green-600
+          = t('search.answer_heading')
+        = simple_format(@response)
 
-  - if @results.present?
-    .rounded-2xl.shadow-md.border.border-gray-100.bg-gray-50
-      .px-6.pt-4
-        h3.text-lg.font-semibold.text-gray-700
-          = t('search.results_heading')
+    - if @results.present?
+      .rounded-2xl.shadow-md.border.border-gray-100.bg-gray-50
+        .px-6.pt-4
+          h3.text-lg.font-semibold.text-gray-700
+            = t('search.results_heading')
 
-      ul.divide-y.divide-gray-200
-        - @results.each_with_index do |chunk, index|
-          .bg-white.rounded-lg.shadow-md.p-4.border.border-gray-200
-            p.text-xs.text-gray-500.mb-1
-              = t('search.chunk_meta', position: chunk.position, tokens: chunk.token_count)
-              span.text-green-600.font-semibold.ml-1= number_with_precision(chunk["similarity_score"].to_f, precision: 4)
+        ul.divide-y.divide-gray-200
+          - @results.each_with_index do |chunk, index|
+            .bg-white.rounded-lg.shadow-md.p-4.border.border-gray-200
+              p.text-xs.text-gray-500.mb-1
+                = t('search.chunk_meta', position: chunk.position, tokens: chunk.token_count)
+                span.text-green-600.font-semibold.ml-1= number_with_precision(chunk["similarity_score"].to_f, precision: 4)
+              p.text-sm.text-gray-800.leading-relaxed.mt-2= simple_format(chunk.content)
 
-            p.text-sm.text-gray-800.leading-relaxed.mt-2= simple_format(chunk.content)
+  .fixed.top-28.right-12.w-80.bg-white.shadow-lg.border.border-gray-300.rounded-xl.p-4.z-50
+    h3.text-md.font-bold.text-gray-700.mb-4.text-center
+      | 🧠 Knowledge Base
+
+    - Document.order(created_at: :desc).limit(10).each_with_index do |doc, i|
+      = link_to document_path(doc), class: "block hover:bg-gray-50 hover:shadow-sm p-3 mb-3 rounded border border-gray-100 transition" do
+        p.text-sm.font-semibold.text-gray-800= "📄 Doc ##{i + 1}"
+        p.text-xs.text-gray-500.leading-snug.mt-1= truncate(doc.content.to_s.strip.split(/[\r\n.]/).first, length: 100)

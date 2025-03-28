@@ -2,68 +2,65 @@
 
   .flex.items-center.justify-between
     h2.text-2xl.font-semibold.text-gray-800
-      | Uploaded Documents
+      = t('documents.doc_index')
 
     .flex.gap-3
-      = link_to "➕ Add New Document", new_document_path, class: "bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition"
-      = link_to "🔍 Search Relevant Info", search_path, class: "bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition"
+      = link_to t('documents.add_document'), new_document_path, class: "bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition"
+      = link_to t('documents.search_relevant'), search_path, class: "bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition"
 
+  .flex.gap-6
 
-  - if @documents.any?
-    table.table-auto.w-full.text-left.text-sm.text-gray-700.border-collapse.shadow-sm.rounded-lg.overflow-hidden
-      thead
-        tr.bg-gray-100.text-gray-600.uppercase.text-xs
-          th.px-4.py-3 ID
-          th.px-4.py-3 Content
-          th.px-4.py-3 Uploaded At
-          th.px-4.py-3 Actions
+    .w-2/3
+      - if @documents.any?
+        table.table-auto.w-full.text-left.text-sm.text-gray-700.border-collapse.shadow-sm.rounded-lg.overflow-hidden
+          thead
+            tr.bg-gray-100.text-gray-600.uppercase.text-xs
+              th.px-4.py-3 ID
+              th.px-4.py-3 Content
+              th.px-4.py-3 Uploaded At
+              th.px-4.py-3 Actions
 
-      tbody
-        - @documents.each_with_index do |doc, index|
-          tr.border-b.border-gray-200.hover:bg-gray-50
-            td.px-4.py-2.font-medium.text-gray-800= index + 1
-            td.px-4.py-2.text-gray-600
-              = truncate(doc.content.to_s.strip, length: 100)
+          tbody
+            - @documents.each_with_index do |doc, index|
+              tr.border-b.border-gray-200.hover:bg-gray-50
+                td.px-4.py-2.font-medium.text-gray-800= index + 1
+                td.px-4.py-2.text-gray-600
+                  = truncate(doc.content.to_s.strip, length: 100)
+                td.px-4.py-2= doc.created_at.strftime('%b %d, %Y')
+                td.px-4.py-2.flex.gap-3
+                  = link_to document_path(doc), class: "text-blue-600 hover:text-blue-800 flex items-center gap-1" do
+                    svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                      path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    span Show
+                  = link_to document_path(doc), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-800 flex items-center gap-1" do
+                    svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                      path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"
+                    span Delete
+      - else
+        .text-center.text-gray-500.bg-gray-100.p-10.rounded-xl.shadow-inner
+          p.text-lg.font-medium.mb-2
+            | No documents available.
+          p.text-sm
+            | Upload a new document to get started!
 
-            td.px-4.py-2= doc.created_at.strftime('%b %d, %Y')
+    .w-1/3.space-y-6
+      h2.text-2xl.font-bold.text-gray-800.text-center
+        = t("documents.content_snapshot")
 
-            td.px-4.py-2.flex.gap-3
-              = link_to document_path(doc), class: "text-blue-600 hover:text-blue-800 flex items-center gap-1" do
-                svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                  path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                span Show
+      .bg-white.p-5.shadow-md.rounded-lg
+        h3.text-md.font-semibold.text-gray-600
+          | 📄 Total Documents
+        p.text-xl.font-bold.text-blue-600.mt-1= @documents.count
 
-              = link_to document_path(doc), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-800 flex items-center gap-1" do
-                svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                  path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"
-                span Delete
-  - else
-    .text-center.text-gray-500.bg-gray-100.p-10.rounded-xl.shadow-inner
-      p.text-lg.font-medium.mb-2
-        | No documents available.
-      p.text-sm
-        | Upload a new document to get started!
+      .bg-white.p-5.shadow-md.rounded-lg
+        h3.text-md.font-semibold.text-gray-600
+          | 📎 Total Chunks
+        p.text-xl.font-bold.text-green-600.mt-1= @chunks.count
 
-.section.mt-12.max-w-6xl.mx-auto.space-y-8
-
-  h2.text-3xl.font-bold.text-gray-800
-    |  Stats
-
-  .grid.grid-cols-3.gap-6
-    .bg-white.p-6.shadow-md.rounded-lg
-      h3.text-xl.font-semibold.text-gray-600.mb-2
-        | 📄 Total Documents
-      p.text-2xl.font-bold.text-blue-600= @documents.count
-
-    .bg-white.p-6.shadow-md.rounded-lg
-      h3.text-xl.font-semibold.text-gray-600.mb-2
-        | 📎 Total Chunks
-      p.text-2xl.font-bold.text-green-600= @chunks.count
-
-    .bg-white.p-6.shadow-md.rounded-lg
-      h3.text-xl.font-semibold.text-gray-600.mb-2
-        | 🔍 Recent Documents
-      ul.text-sm
-        - @documents.each do |doc|
-          li.mb-1
-            = link_to "##{doc.id} - #{truncate(doc.content.to_s.strip, length: 50)}", document_path(doc), class: "text-blue-600 hover:underline"
+      .bg-white.p-5.shadow-md.rounded-lg
+        h3.text-md.font-semibold.text-gray-600.mb-2
+          | 🔍 Recent Documents
+        ul.text-sm
+          - @documents.limit(10).each_with_index do |doc, index|
+            li.mb-1
+              = link_to "##{index + 1} - #{truncate(doc.content.to_s.strip, length: 50)}", document_path(doc), class: "text-blue-600 hover:underline"

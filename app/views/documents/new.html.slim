@@ -1,13 +1,19 @@
-.section.mt-12.max-w-xl.mx-auto.space-y-6
+.section.mt-12.max-w-3xl.mx-auto.space-y-6
 
-  h2.text-2xl.font-semibold.text-center.text-gray-800
-    | Upload a Document/File
+  h2.text-2xl.font-semibold.text-gray-800
+    | Upload File or Paste Document Content
 
   = form_with url: documents_path, local: true, html: { multipart: true }, class: "space-y-4" do
-    .flex.flex-col.gap-3
-      label.text-gray-700.text-sm.font-medium Select a File (txt, pdf, docx, html):
-      = file_field_tag :file, accept: ".txt,.pdf,.docx,.html", class: "border border-gray-300 rounded-md px-4 py-2"
+    .space-y-2
+      label.block.text-sm.font-medium.text-gray-700
+        | Supported file formats: [.txt/.pdf/.docx/.html/.md/.rb/.py]
 
-    = submit_tag "Upload", class: "bg-blue-600 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition"
+      = file_field_tag :file, accept: ".txt,.md,.rb,.py,.pdf,.docx,.html", class: "w-full border px-4 py-2 rounded"
 
-  = link_to "← Back to Documents", documents_path, class: "text-blue-600 hover:underline block mt-4"
+    .space-y-2
+      label.block.text-sm.font-medium.text-gray-700
+        | Or Paste Document Content
+
+      = text_area_tag "document[content]", nil, placeholder: "Paste your document content here...", rows: 10, class: "w-full border px-4 py-2 rounded"
+
+    = submit_tag "Upload Document", class: "bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition"

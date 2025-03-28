@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Rag Demo App" %></title>
+    <title><%= content_for(:title) || "RAG Implementation with RoR" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
@@ -19,14 +19,22 @@
   </head>
 
   <body>
-    <div class="flex justify-end px-6 mt-4">
-      <div class="inline-flex items-center bg-gray-100 rounded-xl shadow-sm">
-        <%= link_to "English", url_for(locale: :en), class: "px-4 py-1 rounded-l-xl text-sm font-medium #{'bg-white text-blue-600 shadow' if I18n.locale == :en}" %>
-        <%= link_to "नेपाली", url_for(locale: :ne), class: "px-4 py-1 rounded-r-xl text-sm font-medium #{'bg-white text-blue-600 shadow' if I18n.locale == :ne}" %>
+  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+
+      <h1 class="text-xl font-bold text-blue-700 flex items-center gap-2">
+        <%= link_to "🤖 RAG Assistant", root_path %>
+      </h1>
+
+      <div class="flex items-center space-x-2">
+        <div class="inline-flex rounded-xl border border-blue-600 overflow-hidden text-sm">
+          <%= link_to "English", url_for(locale: :en), class: "px-4 py-1 font-medium #{'bg-blue-600 text-white' if I18n.locale == :en} #{'text-blue-600 bg-white' if I18n.locale != :en}" %>
+          <%= link_to "नेपाली", url_for(locale: :ne), class: "px-4 py-1 font-medium #{'bg-blue-600 text-white' if I18n.locale == :ne} #{'text-blue-600 bg-white' if I18n.locale != :ne}" %>
+        </div>
       </div>
+
     </div>
-
-
+  </header>
     <main class="container mx-auto mt-28 px-5 flex">
       <%= yield %>
     </main>

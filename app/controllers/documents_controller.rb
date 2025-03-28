@@ -10,17 +10,19 @@ class DocumentsController < ApplicationController
   def new; end
 
   def create
-    uploaded_file = params[:file]
-    return redirect_to documents_path, alert: "No file uploaded." unless uploaded_file
+    content = params[:file]&.read || params[:document][:content]
 
-    content = FileTextExtractor.extract(uploaded_file)
+    if content.blank?
+      redirect_to new_document_path, alert: "Please upload a file or paste some content."
+      return
+    end
 
     @document = Document.new(content: content)
 
     if @document.save
-      redirect_to @document, notice: "Document uploaded!"
+      redirect_to @document, notice: "Document uploaded successfully!"
     else
-      render :new
+      render :new, alert: "Failed to upload document."
     end
   end
 

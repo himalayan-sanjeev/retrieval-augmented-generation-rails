@@ -11,7 +11,7 @@ class FileTextExtractor
 
   def extract
     case @ext
-    when ".txt"
+    when ".txt", ".md", ".rb", ".py"
       @file.read
     when ".pdf"
       require "pdf-reader"
