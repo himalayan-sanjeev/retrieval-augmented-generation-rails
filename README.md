@@ -6,7 +6,7 @@ A simple, clean Retrieval-Augmented Generation (RAG) app built in **Ruby on Rail
 
 ## 🚀 Features
 
-- Upload `.txt` / `.pdf` / `.docx` / `.html` documents as knowledge base
+- Upload `.txt` / `.pdf` / `.docx` / `.html`/ `.rb`/ `.py`/ `.md` documents as knowledge base
 - Automatic document chunking & vector embeddings (Gemini API)
 - Semantic search powered by pgvector
 - LLM-generated answers grounded in uploaded documents
