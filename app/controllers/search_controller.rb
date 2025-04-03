@@ -7,7 +7,13 @@ class SearchController < ApplicationController
 
   def query
     query_text = params[:query]
-    @results = Chunk.search_similar(query_text, top_k: 5)
+    hybrid_enabled = params[:hybrid].present?
+
+    @results = if hybrid_enabled
+                Chunk.hybrid_search(query_text, top_k: 3)
+    else
+                Chunk.search_similar(query_text, top_k: 3)
+    end
 
     context = @results.map(&:content).join("\n---\n")
     @response = generate_response(query_text, context)
@@ -17,6 +23,10 @@ class SearchController < ApplicationController
 
   private
 
+  # Generates a response using the Gemini API based on the provided query and context.
+  # - Sends a request to the Gemini API with the query and context.
+  # - Parses the response to extract the generated text.
+  # - Returns the generated text.
   def generate_response(query, context)
     response = HTTParty.post(
       "#{GENERATION_ENDPOINT}?key=#{GEMINI_API_KEY}",

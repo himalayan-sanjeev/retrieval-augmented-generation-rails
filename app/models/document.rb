@@ -9,10 +9,12 @@ class Document < ApplicationRecord
   GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-exp-03-07:embedContent"
   GEMINI_API_KEY = ENV.fetch("GEMINI_API_KEY", nil)
 
+  # Initializes the OpenAI client for embedding generation.
   def self.openai_client
     @openai = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY", nil))
   end
 
+  # Vector search: find top_k documents similar to a query
   def self.search_similar(query, top_k: 3)
     response = HTTParty.post(
       "#{GEMINI_ENDPOINT}?key=#{ENV['GEMINI_API_KEY']}",
@@ -33,6 +35,7 @@ class Document < ApplicationRecord
       .limit(top_k)
   end
 
+  # Splits document into chunks and stores them with position + token count
   def chunk_content
     TextSplitter.chunk(content).each_with_index do |chunk_text, index|
       chunks.create!(
@@ -45,6 +48,7 @@ class Document < ApplicationRecord
 
   private
 
+  # Calls Gemini API to embed document content and stores it as a vector
   def generate_embedding
     response = HTTParty.post(
       "#{GEMINI_ENDPOINT}?key=#{GEMINI_API_KEY}",
@@ -69,11 +73,13 @@ class Document < ApplicationRecord
     end
   end
 
+  # Destroys old chunks and regenerates them after update
   def refresh_chunks
     chunks.destroy_all
     chunk_content
   end
 
+  # Embedding using OpenAI
   def generate_embedding_using_openai
     response = self.class.openai_client.embeddings(
       parameters: {
