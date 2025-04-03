@@ -31,7 +31,7 @@
 en:
   search:
     title: "🤖 Ask Questions Relevant to the Knowledge Base"
-    subtitle: "Use natural language prompts to get AI-powered answers based on your knowledge base."
+    subtitle: "Use natural language prompts to get AI-powered answers based on the available knowledge base."
     placeholder: "e.g. Tell me about Ruby on Rails"
     submit: "Search"
     answer_heading: "💬 Gemini Answer"
