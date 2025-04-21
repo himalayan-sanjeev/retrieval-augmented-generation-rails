@@ -4,41 +4,27 @@ class Document < ApplicationRecord
   after_create :chunk_content
   after_update :refresh_chunks
 
-  EMBEDDING_MODEL = "text-embedding-ada-002"
-  GEMINI_MODEL = "models/gemini-embedding-exp-03-07"
-  GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-exp-03-07:embedContent"
-  GEMINI_API_KEY = ENV.fetch("GEMINI_API_KEY", nil)
+  # Gemini and OpenAI embedding configs
+  GEMINI_MODEL     = "models/gemini-embedding-exp-03-07"
+  GEMINI_ENDPOINT  = "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-exp-03-07:embedContent"
+  GEMINI_API_KEY   = ENV["GEMINI_API_KEY"]
+  OPENAI_API_KEY   = ENV["OPENAI_ACCESS_TOKEN"]
+  OPENAI_MODEL     = "text-embedding-3-small"
 
-  # OpenAI embedding model
-  OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"
-
-  # Initializes the OpenAI client for embedding generation.
+  # OpenAI client instance
   def self.openai_client
-    @openai = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_ACCESS_TOKEN", nil))
+    @openai ||= OpenAI::Client.new(access_token: OPENAI_API_KEY)
   end
 
-  # Vector search: find top_k documents similar to a query
+  # Retrieves vector search results for documents
   def self.search_similar(query, top_k: 3)
-    response = HTTParty.post(
-      "#{GEMINI_ENDPOINT}?key=#{ENV['GEMINI_API_KEY']}",
-      headers: { "Content-Type" => "application/json" },
-      body: {
-        model: GEMINI_MODEL,
-        content: {
-          parts: [ { text: query } ]
-        }
-      }.to_json
-    )
+    embedding = embed_with_gemini(query) || embed_with_openai(query)
+    return none unless embedding
 
-    embedding = response.dig("embedding", "values")
-    vector = "[#{embedding.join(',')}]"
-
-    Document
-      .order(Arel.sql("embedding <#> '#{vector}'")) # <#> = cosine distance
-      .limit(top_k)
+    Document.order(Arel.sql("embedding <#> '[#{embedding.join(',')}]'")).limit(top_k)
   end
 
-  # Splits document into chunks and stores them with position + token count
+  # Split and create chunks from content
   def chunk_content
     TextSplitter.chunk(content).each_with_index do |chunk_text, index|
       chunks.create!(
@@ -49,49 +35,66 @@ class Document < ApplicationRecord
     end
   end
 
-  # Embedding using OpenAI
-  def generate_embedding_using_openai
-    debugger
-    response = self.class.openai_client.embeddings(
-      parameters: {
-        model: OPENAI_EMBEDDING_MODEL,
-        input: content
-      }
-    )
-
-    self.embedding = response["data"][0]["embedding"]
-  end
-
   private
 
-  # Calls Gemini API to embed document content and stores it as a vector
+  # Generates embedding before creation using Gemini (fallback to OpenAI)
   def generate_embedding
+    embedding = self.class.embed_with_gemini(content) || self.class.embed_with_openai(content)
+    self.embedding = "[#{embedding.join(',')}]" if embedding
+  end
+
+  # Re-chunk after document update
+  def refresh_chunks
+    chunks.destroy_all
+    chunk_content
+  end
+
+  # Embed text using Gemini API
+  def self.embed_with_gemini(text)
+    return nil unless GEMINI_API_KEY.present?
+
     response = HTTParty.post(
       "#{GEMINI_ENDPOINT}?key=#{GEMINI_API_KEY}",
       headers: { "Content-Type" => "application/json" },
       body: {
         model: GEMINI_MODEL,
-        content: {
-          parts: [
-            { text: content }
-          ]
-        },
-      taskType: "RETRIEVAL_DOCUMENT"
-    }.to_json
+        content: { parts: [ { text: text } ] },
+        taskType: "RETRIEVAL_DOCUMENT"
+      }.to_json
     )
 
     if response.code == 200
-      values = response.parsed_response.dig("embedding", "values")
-      self.embedding = "[#{values.join(',')}]"
+      response.parsed_response.dig("embedding", "values")
     else
-      Rails.logger.error "Gemini Error: #{response.parsed_response}"
-      self.embedding = nil
+      Rails.logger.warn "Gemini fallback: #{response.code} - #{response.body}"
+      nil
     end
   end
 
-  # Destroys old chunks and regenerates them after update
-  def refresh_chunks
-    chunks.destroy_all
-    chunk_content
+  # Embed text using OpenAI
+  def self.embed_with_openai(text)
+    return nil unless OPENAI_API_KEY.present?
+
+    retries = 2
+    begin
+      response = openai_client.embeddings(
+        parameters: {
+          model: OPENAI_MODEL,
+          input: text
+        }
+      )
+      response["data"][0]["embedding"]
+    rescue Faraday::TooManyRequestsError
+      if (retries -= 1) >= 0
+        sleep 1.5
+        retry
+      else
+        Rails.logger.error "OpenAI rate limit exceeded."
+        nil
+      end
+    rescue => e
+      Rails.logger.error "OpenAI fallback failed: #{e.message}"
+      nil
+    end
   end
 end

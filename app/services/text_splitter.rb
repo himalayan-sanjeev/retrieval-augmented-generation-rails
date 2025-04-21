@@ -2,7 +2,6 @@ class TextSplitter
   require "nokogiri"
 
   def self.chunk(text, chunk_size: 50)
-    debugger
     # Split the text into sentences using a simple sentence delimiter
     sentences = text.scan(/[^.!?]+[.!?]/).map(&:strip)
 
