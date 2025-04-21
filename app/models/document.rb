@@ -9,9 +9,12 @@ class Document < ApplicationRecord
   GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-exp-03-07:embedContent"
   GEMINI_API_KEY = ENV.fetch("GEMINI_API_KEY", nil)
 
+  # OpenAI embedding model
+  OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"
+
   # Initializes the OpenAI client for embedding generation.
   def self.openai_client
-    @openai = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY", nil))
+    @openai = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_ACCESS_TOKEN", nil))
   end
 
   # Vector search: find top_k documents similar to a query
@@ -46,6 +49,19 @@ class Document < ApplicationRecord
     end
   end
 
+  # Embedding using OpenAI
+  def generate_embedding_using_openai
+    debugger
+    response = self.class.openai_client.embeddings(
+      parameters: {
+        model: OPENAI_EMBEDDING_MODEL,
+        input: content
+      }
+    )
+
+    self.embedding = response["data"][0]["embedding"]
+  end
+
   private
 
   # Calls Gemini API to embed document content and stores it as a vector
@@ -77,17 +93,5 @@ class Document < ApplicationRecord
   def refresh_chunks
     chunks.destroy_all
     chunk_content
-  end
-
-  # Embedding using OpenAI
-  def generate_embedding_using_openai
-    response = self.class.openai_client.embeddings(
-      parameters: {
-        model: EMBEDDING_MODEL,
-        input: content
-      }
-    )
-
-    self.embedding = response["data"][0]["embedding"]
   end
 end
